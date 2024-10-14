@@ -1,6 +1,6 @@
 {
 	"name": "surrealdb-zod",
-	"version": "1.0.3",
+	"version": "1.0.0",
 	"description": "Re-useable zod schema's for use with SurrealDB sdk",
 	"license": "MIT",
 	"author": {
