@@ -1,0 +1,48 @@
+{
+	"name": "surrealdb-zod",
+	"version": "1.0.3",
+	"description": "Re-useable zod schema's for use with SurrealDB sdk",
+	"license": "MIT",
+	"author": {
+		"email": "levyvandervalk@gmail.com",
+		"name": "Levy van der Valk"
+	},
+	"keywords": [
+		
+	],
+	"type": "module",
+	"files": [
+		"dist"
+	],
+	"main": "dist/surrealdbZod.umd.js",
+	"module": "dist/surrealdbZod.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		"types": "./dist/index.d.ts",
+		"import": "./dist/surrealdbZod.js",
+		"require": "./dist/surrealdbZod.umd.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/ShadowWolf308/surrealdb-zod"
+	},
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite build && tsup ./lib/index.ts --dts --dts-only",
+		"preview": "vite preview",
+		"production": "pnpm build && pnpm publish"
+	},
+	"peerDependencies": {
+		"surrealdb": "^1.0.6",
+		"zod": "^3.23.8"
+	},
+	"dependencies": {
+		"surrealdb": "^1.0.6",
+		"zod": "^3.23.8"
+	},
+	"devDependencies": {
+		"tsup": "^6.5.0",
+		"typescript": "^5.4.5",
+		"vite": "^5.2.12"
+	}
+}
