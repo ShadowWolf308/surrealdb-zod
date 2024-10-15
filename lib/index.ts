@@ -1,6 +1,5 @@
-import { BoundExcluded, BoundIncluded, Decimal, Duration, Future, GeometryCollection, GeometryLine, GeometryMultiLine, GeometryMultiPoint, GeometryMultiPolygon, GeometryPoint, GeometryPolygon, Range, RecordId, RecordIdRange, StringRecordId, Table, Uuid } from "surrealdb";
+import { Bound, BoundExcluded, BoundIncluded, Decimal, Duration, Future, GeometryCollection, GeometryLine, GeometryMultiLine, GeometryMultiPoint, GeometryMultiPolygon, GeometryPoint, GeometryPolygon, Range, RecordId, RecordIdRange, StringRecordId, Table, Uuid } from "surrealdb";
 import { z } from "zod";
-
 // SECTION - Decimal
 
 export const DecimalSchema = z.custom<Decimal>((v) => v instanceof Decimal, "Value is not a valid Decimal", true);
@@ -29,26 +28,88 @@ export const GeometryCollectionSchema = z.custom<GeometryCollection>((v) => v in
 // !SECTION
 // SECTION - Range
 
-/**
- * Note: The `Beg` and `End` types are not checked, only the instance type.  
- * This is a function to allow for specifying the `Beg` and `End` types.
- */
-export function RangeSchema<Beg, End>() {
-	return z.custom<Range<Beg, End>>((v) => v instanceof Range, "Value is not a valid Range", true);
+export function RangeSchema<Beg  extends z.ZodAny, End  extends z.ZodAny>(begValueSchema: Beg, endValueSchema: End) {
+	const getBoundSchema = (bound: Bound<unknown>, schema: Beg | End) => {
+		return bound instanceof BoundIncluded ? BoundIncludedSchema(schema) : (bound instanceof BoundExcluded ? BoundExcludedSchema(schema) : z.undefined());
+	}
+
+	return z.custom<Range<z.infer<Beg>, z.infer<End>>>(
+		(v) => v instanceof Range,
+		"Value is not a valid Range",
+		true,
+	)
+		.superRefine(
+			(v, ctx) => {
+				const parsedBeg = getBoundSchema(v.beg, begValueSchema).safeParse(v.beg);
+
+				if (!parsedBeg.success) {
+					for (const issue of parsedBeg.error.issues) {
+						ctx.addIssue({
+							...issue,
+							path: [...ctx.path, "value", ...issue.path],
+						});
+					}
+				}
+
+				const parsedEnd = getBoundSchema(v.end, endValueSchema).safeParse(v.end);
+
+				if (!parsedEnd.success) {
+					for (const issue of parsedEnd.error.issues) {
+						ctx.addIssue({
+							...issue,
+							path: [...ctx.path, "value", ...issue.path],
+						});
+					}
+				}
+			},
+		);
 }
-/**
- * Note: The `T` type is not checked, only the instance type.
- * This is a function to allow for specifying the `T` type.
- */
-export function BoundIncludedSchema<T>() {
-	return z.custom<BoundIncluded<T>>((v) => v instanceof BoundIncluded, "Value is not a valid BoundIncluded", true);
+export function BoundIncludedSchema<T extends z.ZodAny>(valueSchema: T) {
+	return z.custom<BoundIncluded<T>>(
+		(v) => v instanceof BoundIncluded,
+		"Value is not a valid BoundIncluded",
+		true,
+	)
+		.superRefine(
+			(v, ctx) => {
+				const parsed = valueSchema.safeParse(v.value);
+
+				if (parsed.success) {
+					// NOTE: See https://zod.dev/?id=abort-early
+					return z.NEVER;
+				}
+
+				for (const issue of parsed.error.issues) {
+					ctx.addIssue({
+						...issue,
+						path: [...ctx.path, "value", ...issue.path],
+					});
+				}
+			},
+		);
 }
-/**
- * Note: The `T` type is not checked, only the instance type.
- * This is a function to allow for specifying the `T` type.
- */
-export function BoundExcludedSchema<T>() {
-	return z.custom<BoundExcluded<T>>((v) => v instanceof BoundExcluded, "Value is not a valid BoundIncluded", true);
+export function BoundExcludedSchema<T extends z.ZodAny>(valueSchema: T) {
+	return z.custom<BoundExcluded<T>>(
+		(v) => v instanceof BoundExcluded,
+		"Value is not a valid BoundIncluded",
+		true,
+	)
+		.superRefine(
+			(v, ctx) => {
+				const parsed = valueSchema.safeParse(v.value);
+
+				if (parsed.success) {
+					return;
+				}
+
+				for (const issue of parsed.error.issues) {
+					ctx.addIssue({
+						...issue,
+						path: [...ctx.path, "value", ...issue.path],
+					});
+				}
+			},
+		);
 }
 export const RecordIdRangeSchema = z.custom<RecordIdRange>((v) => v instanceof RecordIdRange, "Value is not a valid RecordIdRange", true);
 export function RecordIdRangeSchemaOf<Tb extends string>(table: Tb) {
@@ -108,9 +169,11 @@ export function TableSchemaOf<Tb extends string>(table: Tb) {
 export const UUIDSchema = z.custom<Uuid>((v) => v instanceof Uuid, "Value is not a valid Uuid", true);
 
 // !SECTION
-// SECTION - Types
+// SECTION - Types of Helperes
+// SECTION - RecordId
 
 export type Record = z.infer<typeof RecordSchema>;
 export type RecordOf<Tb extends string = string> = z.infer<ReturnType<typeof RecordSchemaOf<Tb>>>;
 
+// !SECTION
 // !SECTION
