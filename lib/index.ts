@@ -1,5 +1,6 @@
 import { Bound, BoundExcluded, BoundIncluded, Decimal, Duration, Future, GeometryCollection, GeometryLine, GeometryMultiLine, GeometryMultiPoint, GeometryMultiPolygon, GeometryPoint, GeometryPolygon, Range, RecordId, RecordIdRange, StringRecordId, Table, Uuid } from "surrealdb";
 import { z } from "zod";
+
 // SECTION - Decimal
 
 export const DecimalSchema = z.custom<Decimal>((v) => v instanceof Decimal, "Value is not a valid Decimal", true);
@@ -166,7 +167,7 @@ export function TableSchemaOf<Tb extends string>(table: Tb) {
 // !SECTION
 // SECTION - Uuid
 
-export const UUIDSchema = z.custom<Uuid>((v) => v instanceof Uuid, "Value is not a valid Uuid", true);
+export const UuidSchema = z.custom<Uuid>((v) => v instanceof Uuid, "Value is not a valid Uuid", true);
 
 // !SECTION
 // SECTION - Types of Helperes
