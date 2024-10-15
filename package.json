@@ -7,8 +7,13 @@
 		"email": "levyvandervalk@gmail.com",
 		"name": "Levy van der Valk"
 	},
-	"keywords": [
-		
+	"keywords":  [
+		"surrealdb",
+		"javascript",
+		"typescript",
+		"schema",
+		"validation",
+		"type"
 	],
 	"type": "module",
 	"files": [
