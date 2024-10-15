@@ -28,7 +28,7 @@ export const GeometryCollectionSchema = z.custom<GeometryCollection>((v) => v in
 // !SECTION
 // SECTION - Range
 
-export function RangeSchema<Beg  extends z.ZodType, End  extends z.ZodType>(begValueSchema: Beg, endValueSchema: End) {
+export function RangeSchema<Beg  extends z.ZodTypeAny, End  extends z.ZodTypeAny>(begValueSchema: Beg, endValueSchema: End) {
 	const getBoundSchema = (bound: Bound<unknown>, schema: Beg | End) => {
 		return bound instanceof BoundIncluded ? BoundIncludedSchema(schema) : (bound instanceof BoundExcluded ? BoundExcludedSchema(schema) : z.undefined());
 	}
@@ -64,7 +64,7 @@ export function RangeSchema<Beg  extends z.ZodType, End  extends z.ZodType>(begV
 			},
 		);
 }
-export function BoundIncludedSchema<T extends z.ZodType>(valueSchema: T) {
+export function BoundIncludedSchema<T extends z.ZodTypeAny>(valueSchema: T) {
 	return z.custom<BoundIncluded<T>>(
 		(v) => v instanceof BoundIncluded,
 		"Value is not a valid BoundIncluded",
@@ -88,7 +88,7 @@ export function BoundIncludedSchema<T extends z.ZodType>(valueSchema: T) {
 			},
 		);
 }
-export function BoundExcludedSchema<T extends z.ZodType>(valueSchema: T) {
+export function BoundExcludedSchema<T extends z.ZodTypeAny>(valueSchema: T) {
 	return z.custom<BoundExcluded<T>>(
 		(v) => v instanceof BoundExcluded,
 		"Value is not a valid BoundIncluded",
