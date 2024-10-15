@@ -1,5 +1,15 @@
-# surrealdb-zod
-Re-useable [zod](https://www.npmjs.com/package/zod) schema's for use with [SurrealDB sdk](https://www.npmjs.com/package/surrealdb).
+<p align="center">
+    <img width="300" src="./img/surreal-zod.svg" />
+</p>
+
+<h1 align="center">surrealdb-zod</h1>
+<p align="center">
+<a href="https://opensource.org/licenses/MIT" rel="nofollow"><img src="https://img.shields.io/github/license/ShadowWolf308/surrealdb-zod" alt="License"></a>
+<a href="https://github.com/ShadowWolf308"><img src="https://img.shields.io/badge/created%20by-@ShadowWolf308 -45c724.svg" alt="Created by Levy van der Valk"></a>
+<a href="https://www.npmjs.com/package/surrealdb-zod" rel="nofollow"><img src="https://img.shields.io/npm/dw/surreal-zod.svg" alt="npm"></a>
+<a href="https://github.com/ShadowWolf308/surrealdb-zod" rel="nofollow"><img src="https://img.shields.io/github/stars/ShadowWolf308/surrealdb-zod" alt="stars"></a>
+</p>
+<p align="center">Re-useable <a href="https://www.npmjs.com/package/zod">zod</a> schema's for use with <a href="https://www.npmjs.com/package/surrealdb">SurrealDB sdk</a>.</p>
 
 ## How to use
 Install it with:
