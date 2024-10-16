@@ -1,14 +1,19 @@
 {
 	"name": "surrealdb-zod",
-	"version": "1.1.1",
+	"version": "1.1.2",
 	"description": "Re-useable zod schema's for use with SurrealDB sdk",
 	"license": "MIT",
 	"author": {
 		"email": "levyvandervalk@gmail.com",
 		"name": "Levy van der Valk"
 	},
-	"keywords": [
-		
+	"keywords":  [
+		"surrealdb",
+		"javascript",
+		"typescript",
+		"schema",
+		"validation",
+		"type"
 	],
 	"type": "module",
 	"files": [
