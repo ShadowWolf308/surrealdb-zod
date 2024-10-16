@@ -7,7 +7,8 @@
 <a href="https://opensource.org/licenses/MIT" rel="nofollow"><img src="https://img.shields.io/github/license/ShadowWolf308/surrealdb-zod" alt="License"></a>
 <a href="https://github.com/ShadowWolf308"><img src="https://img.shields.io/badge/created%20by-@ShadowWolf308 -45c724.svg" alt="Created by Levy van der Valk"></a>
 <a href="https://www.npmjs.com/package/surrealdb-zod" rel="nofollow"><img src="https://img.shields.io/npm/dw/surrealdb-zod" alt="npm"></a>
-<a href="https://github.com/ShadowWolf308/surrealdb-zod" rel="nofollow"><img src="https://img.shields.io/github/stars/ShadowWolf308/surrealdb-zod" alt="stars"></a>
+<a href="https://github.com/ShadowWolf308/surrealdb-zod" rel="nofollow"><img src="https://img.shields.io/github/stars/ShadowWolf308/surrealdb-zod?style=flat
+" alt="stars"></a>
 </p>
 <p align="center">Re-useable <a href="https://www.npmjs.com/package/zod">zod</a> schema's for use with <a href="https://www.npmjs.com/package/surrealdb">SurrealDB sdk</a>.</p>
 
