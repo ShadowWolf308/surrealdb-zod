@@ -9,14 +9,11 @@ export default defineConfig((env) => ({
 			fileName: "surrealdbZod",
 		},
 		rollupOptions: {
-			external: [
-				"zod",
-				"surrealdb",
-			],
+			external: ["zod", "surrealdb"],
 			output: {
 				globals: {
-					'zod': 'zod',
-					'surrealdb': 'surrealdb',
+					zod: "zod",
+					surrealdb: "surrealdb",
 				},
 			},
 		},

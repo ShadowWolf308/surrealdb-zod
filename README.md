@@ -56,6 +56,7 @@ e.g. usage: `const schema = RecordIdSchemaOf("person")`
 * Some types like `Range` have required generic types, these schema's are function and follow the following naming scheme: `{ClassName}Schema`  
 e.g.: `RangeSchema(z.string(), z.string())`
 * Some schema function have props that are a `string` (e.g. `RecordIdSchemaOf`) and some are any zod schema (e.g. `RangeSchema`)
+* v2.X works with zod 4 and v1.X works with zod 3
 
 ## References
 * [zod docs](https://zod.dev/)
