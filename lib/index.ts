@@ -19,7 +19,7 @@ import {
 	Table,
 	Uuid,
 } from "surrealdb";
-import { custom, type infer as Infer, NEVER, object, string, type ZodType, undefined as ZodUndefined } from "zod";
+import { custom, NEVER, object, type output, string, type ZodType, undefined as ZodUndefined } from "zod";
 
 // SECTION - Decimal
 
@@ -79,7 +79,7 @@ export function RangeSchema<Beg extends ZodType, End extends ZodType>(begValueSc
 				: ZodUndefined();
 	};
 
-	return custom<Range<Infer<Beg>, Infer<End>>>((v) => v instanceof Range, "Value is not a valid Range").superRefine(
+	return custom<Range<output<Beg>, output<End>>>((v) => v instanceof Range, "Value is not a valid Range").superRefine(
 		(v, ctx) => {
 			const parsedBeg = getBoundSchema(v.beg, begValueSchema).safeParse(v.beg);
 
@@ -206,8 +206,8 @@ export const UuidSchema = custom<Uuid>((v) => v instanceof Uuid, "Value is not a
 // SECTION - Types of Helpers
 // SECTION - RecordId
 
-export type Record = Infer<typeof RecordSchema>;
-export type RecordOf<Tb extends string = string> = Infer<ReturnType<typeof RecordSchemaOf<Tb>>>;
+export type Record = output<typeof RecordSchema>;
+export type RecordOf<Tb extends string = string> = output<ReturnType<typeof RecordSchemaOf<Tb>>>;
 
 // !SECTION
 // !SECTION
