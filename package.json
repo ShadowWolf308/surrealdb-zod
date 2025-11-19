@@ -33,9 +33,9 @@
 	},
 	"scripts": {
 		"dev": "vite",
-		"build": "tsc && vite build",
+		"compile": "tsc && vite build",
 		"preview": "vite preview",
-		"production": "bun build && bun publish",
+		"production": "bun compile && bun publish",
 		"lint": "biome check . --formatter-enabled=false",
 		"lint:apply": "biome check . --formatter-enabled=false --write",
 		"lint:apply:unsafe": "biome check . --formatter-enabled=false --write --unsafe"
