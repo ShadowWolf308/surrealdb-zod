@@ -13,6 +13,9 @@
 	},
 	"linter": {
 		"enabled": true,
+		"domains": {
+			"project": "recommended"
+		},
 		"rules": {
 			"recommended": true,
 			"style": {
@@ -30,10 +33,20 @@
 						"ignoreRestSiblings": true
 					}
 				}
+			},
+			"nursery": {
+				"recommended": true
 			}
 		}
 	},
 	"files": {
-		"includes": ["**", "!**/node_modules", "!**/dist", "!**/.vscode", "!**/.vite", "!**/*.js"]
+		"includes": [
+			"**",
+			"!**/node_modules",
+			"!**/dist",
+			"!**/.vscode",
+			"!**/.vite",
+			"!**/*.js"
+		]
 	}
 }

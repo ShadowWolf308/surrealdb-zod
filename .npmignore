@@ -1,5 +1,6 @@
 public/
 lib/
+test/
 .vscode/
 .github/
 node_modules/

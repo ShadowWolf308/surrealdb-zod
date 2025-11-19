@@ -2,8 +2,10 @@ import {
 	type Bound,
 	BoundExcluded,
 	BoundIncluded,
+	DateTime,
 	Decimal,
 	Duration,
+	FileRef,
 	Future,
 	GeometryCollection,
 	GeometryLine,
@@ -21,6 +23,11 @@ import {
 } from "surrealdb";
 import { custom, NEVER, object, type output, string, type ZodType, undefined as ZodUndefined } from "zod";
 
+// SECTION - DateTime
+
+export const DateTimeSchema = custom<DateTime>((v) => v instanceof DateTime, "Value is not a valid DateTime");
+
+// !SECTION
 // SECTION - Decimal
 
 export const DecimalSchema = custom<Decimal>((v) => v instanceof Decimal, "Value is not a valid Decimal");
@@ -31,8 +38,16 @@ export const DecimalSchema = custom<Decimal>((v) => v instanceof Decimal, "Value
 export const DurationSchema = custom<Duration>((v) => v instanceof Duration, "Value is not a valid Duration");
 
 // !SECTION
+// SECTION - File
+
+export const FileRefSchema = custom<FileRef>((v) => v instanceof FileRef, "Value is not a valid FileRef");
+
+// !SECTION
 // SECTION - Future
 
+/**
+ * @deprecated Futures were removed in SurrealDB 3.0
+ */
 export const FutureSchema = custom<Future>((v) => v instanceof Future, "Value is not a valid Future");
 
 // !SECTION
@@ -81,7 +96,7 @@ export function RangeSchema<Beg extends ZodType, End extends ZodType>(begValueSc
 
 	return custom<Range<output<Beg>, output<End>>>((v) => v instanceof Range, "Value is not a valid Range").superRefine(
 		(v, ctx) => {
-			const parsedBeg = getBoundSchema(v.beg, begValueSchema).safeParse(v.beg);
+			const parsedBeg = getBoundSchema(v.begin, begValueSchema).safeParse(v.begin);
 
 			if (!parsedBeg.success) {
 				for (const issue of parsedBeg.error.issues) {
@@ -147,11 +162,11 @@ export const RecordIdRangeSchema = custom<RecordIdRange>(
 	"Value is not a valid RecordIdRange",
 );
 export function RecordIdRangeSchemaOf<Tb extends string>(table: Tb) {
-	string().parse(table);
+	const parsedTable = string().parse(table);
 
 	return custom<RecordIdRange<Tb>>(
-		(v) => v instanceof RecordIdRange && v.tb === table,
-		`Value is not a valid RecordIdRange or is not from table: ${table}`,
+		(v) => v instanceof RecordIdRange && v.table.name === parsedTable,
+		`Value is not a valid RecordIdRange or is not from table: ${parsedTable}`,
 	);
 }
 
@@ -160,11 +175,11 @@ export function RecordIdRangeSchemaOf<Tb extends string>(table: Tb) {
 
 export const RecordIdSchema = custom<RecordId>((value) => value instanceof RecordId, "Value is not a valid RecordId");
 export function RecordIdSchemaOf<Tb extends string>(table: Tb) {
-	string().parse(table);
+	const parsedTable = string().parse(table);
 
 	return custom<RecordId<Tb>>(
-		(value) => value instanceof RecordId && value.tb === table,
-		`Value is not a valid RecordId or is not from table: ${table}`,
+		(value) => value instanceof RecordId && value.table.name === parsedTable,
+		`Value is not a valid RecordId or is not from table: ${parsedTable}`,
 	);
 }
 export const StringRecordIdSchema = custom<StringRecordId>(
@@ -189,11 +204,11 @@ export function RecordSchemaOf<Tb extends string>(table: Tb) {
 
 export const TableSchema = custom<Table>((v) => v instanceof Table, "Value is not a valid Table");
 export function TableSchemaOf<Tb extends string>(table: Tb) {
-	string().parse(table);
+	const parsedTable = string().parse(table);
 
 	return custom<Table<Tb>>(
-		(v) => v instanceof Table && v.tb === table,
-		`Value is not a valid Table or is not from table: ${table}`,
+		(v) => v instanceof Table && v.name === parsedTable,
+		`Value is not a valid Table or is not from table: ${parsedTable}`,
 	);
 }
 

@@ -60,6 +60,6 @@ e.g.: `RangeSchema(z.string(), z.string())`
 
 ## References
 * [zod docs](https://zod.dev/)
-* [zod npm package ](https://www.npmjs.com/package/zod)
+* [zod npm package](https://www.npmjs.com/package/zod)
 * [SurrealDB docs](https://surrealdb.com/)
 * [SurrealDB npm package](https://www.npmjs.com/package/surrealdb)
