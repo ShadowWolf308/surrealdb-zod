@@ -13,7 +13,8 @@
 		"typescript",
 		"schema",
 		"validation",
-		"type"
+		"type",
+		"zod"
 	],
 	"type": "module",
 	"files": [
