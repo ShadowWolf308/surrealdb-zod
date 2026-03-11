@@ -40,13 +40,6 @@
 		}
 	},
 	"files": {
-		"includes": [
-			"**",
-			"!**/node_modules",
-			"!**/dist",
-			"!**/.vscode",
-			"!**/.vite",
-			"!**/*.js"
-		]
+		"includes": ["**", "!**/node_modules", "!**/dist", "!**/.vscode", "!**/.vite", "!**/*.js"]
 	}
 }

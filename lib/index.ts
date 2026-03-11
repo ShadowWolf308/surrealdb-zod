@@ -310,14 +310,17 @@ export function RecordIdRangeSchemaOf<Tb extends string, Id extends RecordIdValu
 	table: Tb,
 	id?: Id,
 ) {
-	return custom<RecordIdRange<Tb, Id extends ZodType ? output<Id> : RecordIdValue>>((v) => v instanceof RecordIdRange, {
-		error: (issue) => {
-			return constructErrorMessage({
-				expected: "RecordIdRange",
-				input: issue.input,
-			});
+	return custom<RecordIdRange<Tb, Id extends ZodType ? output<Id> : RecordIdValue>>(
+		(v) => v instanceof RecordIdRange,
+		{
+			error: (issue) => {
+				return constructErrorMessage({
+					expected: "RecordIdRange",
+					input: issue.input,
+				});
+			},
 		},
-	}).superRefine((v, ctx) => {
+	).superRefine((v, ctx) => {
 		const parsedTable = TableSchemaOf(table).safeParse(v.table);
 
 		if (!parsedTable.success) {
