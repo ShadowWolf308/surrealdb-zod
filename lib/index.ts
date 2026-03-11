@@ -7,6 +7,7 @@ import {
 	Duration,
 	FileRef,
 	Future,
+	Geometry,
 	GeometryCollection,
 	GeometryLine,
 	GeometryMultiLine,
@@ -17,30 +18,120 @@ import {
 	Range,
 	RecordId,
 	RecordIdRange,
+	type RecordIdValue,
 	StringRecordId,
 	Table,
 	Uuid,
 } from "surrealdb";
-import { custom, NEVER, object, type output, string, type ZodType, undefined as ZodUndefined } from "zod";
+import {
+	custom,
+	NEVER,
+	object,
+	type output,
+	type ZodArray,
+	type ZodBigInt,
+	type ZodCustom,
+	type ZodNumber,
+	type ZodObject,
+	type ZodString,
+	type ZodType,
+	undefined as ZodUndefined,
+} from "zod";
+
+/**
+ * @private
+ */
+function getValueType(value: unknown): string {
+	if (typeof value === "object") {
+		if (value === null) {
+			return "null";
+		}
+
+		return value.constructor.name;
+	}
+
+	return typeof value;
+}
+
+/**
+ * @private
+ */
+interface ErrorMessageOptions {
+	expected: string;
+	input: unknown;
+}
+
+/**
+ * @private
+ */
+function constructErrorMessage({ expected, input }: ErrorMessageOptions): string {
+	const inputType = getValueType(input);
+
+	return `Invalid input: expected ${expected}, received ${inputType}`;
+}
+
+/**
+ * @private
+ */
+function getBoundSchema<T extends ZodType>(bound: Bound<unknown>, schema: T) {
+	return bound instanceof BoundIncluded
+		? BoundIncludedSchema(schema)
+		: bound instanceof BoundExcluded
+			? BoundExcludedSchema(schema)
+			: ZodUndefined();
+}
+
+/**
+ * @private
+ */
+type RecordIdValueSchema = ZodString | ZodNumber | ZodCustom<Uuid> | ZodBigInt | ZodObject | ZodArray;
 
 // SECTION - DateTime
 
-export const DateTimeSchema = custom<DateTime>((v) => v instanceof DateTime, "Value is not a valid DateTime");
+export const DateTimeSchema = custom<DateTime>((v) => v instanceof DateTime, {
+	error: (issue) => {
+		return constructErrorMessage({
+			expected: "DateTime",
+			input: issue.input,
+		});
+	},
+});
 
 // !SECTION
 // SECTION - Decimal
 
-export const DecimalSchema = custom<Decimal>((v) => v instanceof Decimal, "Value is not a valid Decimal");
+export const DecimalSchema = custom<Decimal>((v) => v instanceof Decimal, {
+	error: (issue) => {
+		return constructErrorMessage({
+			expected: "Decimal",
+			input: issue.input,
+		});
+	},
+});
 
 // !SECTION
 // SECTION - Duration
 
-export const DurationSchema = custom<Duration>((v) => v instanceof Duration, "Value is not a valid Duration");
+export const DurationSchema = custom<Duration>((v) => v instanceof Duration, {
+	error: (issue) => {
+		return constructErrorMessage({
+			expected: "Duration",
+			input: issue.input,
+		});
+	},
+});
 
 // !SECTION
 // SECTION - File
 
-export const FileRefSchema = custom<FileRef>((v) => v instanceof FileRef, "Value is not a valid FileRef");
+export const FileRefSchema = custom<FileRef>((v) => v instanceof FileRef, {
+	error: (issue) => {
+		return constructErrorMessage({
+			expected: "FileRef",
+			input: issue.input,
+		});
+	},
+});
 
 // !SECTION
 // SECTION - Future
@@ -48,153 +139,290 @@ export const FileRefSchema = custom<FileRef>((v) => v instanceof FileRef, "Value
 /**
  * @deprecated Futures were removed in SurrealDB 3.0
  */
-export const FutureSchema = custom<Future>((v) => v instanceof Future, "Value is not a valid Future");
+export const FutureSchema = custom<Future>((v) => v instanceof Future, {
+	error: (issue) => {
+		return constructErrorMessage({
+			expected: "Future",
+			input: issue.input,
+		});
+	},
+});
 
 // !SECTION
 // SECTION - Geometry
 
-export const GeometryPointSchema = custom<GeometryPoint>(
-	(v) => v instanceof GeometryPoint,
-	"Value is not a valid GeometryPoint",
-);
-export const GeometryLineSchema = custom<GeometryLine>(
-	(v) => v instanceof GeometryLine,
-	"Value is not a valid GeometryLine",
-);
-export const GeometryPolygonSchema = custom<GeometryPolygon>(
-	(v) => v instanceof GeometryPolygon,
-	"Value is not a valid GeometryPolygon",
-);
-export const GeometryMultiPointSchema = custom<GeometryMultiPoint>(
-	(v) => v instanceof GeometryMultiPoint,
-	"Value is not a valid GeometryMultiPoint",
-);
-export const GeometryMultiLineSchema = custom<GeometryMultiLine>(
-	(v) => v instanceof GeometryMultiLine,
-	"Value is not a valid GeometryMultiLine",
-);
-export const GeometryMultiPolygonSchema = custom<GeometryMultiPolygon>(
-	(v) => v instanceof GeometryMultiPolygon,
-	"Value is not a valid GeometryPolygon",
-);
-export const GeometryCollectionSchema = custom<GeometryCollection>(
-	(v) => v instanceof GeometryCollection,
-	"Value is not a valid GeometryCollection",
-);
+export const GeometrySchema = custom<Geometry>((v) => v instanceof Geometry, {
+	error: (issue) => {
+		return constructErrorMessage({
+			expected: "Geometry",
+			input: issue.input,
+		});
+	},
+});
+export const GeometryPointSchema = custom<GeometryPoint>((v) => v instanceof GeometryPoint, {
+	error: (issue) => {
+		return constructErrorMessage({
+			expected: "GeometryPoint",
+			input: issue.input,
+		});
+	},
+});
+export const GeometryLineSchema = custom<GeometryLine>((v) => v instanceof GeometryLine, {
+	error: (issue) => {
+		return constructErrorMessage({
+			expected: "GeometryLine",
+			input: issue.input,
+		});
+	},
+});
+export const GeometryPolygonSchema = custom<GeometryPolygon>((v) => v instanceof GeometryPolygon, {
+	error: (issue) => {
+		return constructErrorMessage({
+			expected: "GeometryPolygon",
+			input: issue.input,
+		});
+	},
+});
+export const GeometryMultiPointSchema = custom<GeometryMultiPoint>((v) => v instanceof GeometryMultiPoint, {
+	error: (issue) => {
+		return constructErrorMessage({
+			expected: "GeometryMultiPoint",
+			input: issue.input,
+		});
+	},
+});
+export const GeometryMultiLineSchema = custom<GeometryMultiLine>((v) => v instanceof GeometryMultiLine, {
+	error: (issue) => {
+		return constructErrorMessage({
+			expected: "GeometryMultiLine",
+			input: issue.input,
+		});
+	},
+});
+export const GeometryMultiPolygonSchema = custom<GeometryMultiPolygon>((v) => v instanceof GeometryMultiPolygon, {
+	error: (issue) => {
+		return constructErrorMessage({
+			expected: "GeometryMultiPolygon",
+			input: issue.input,
+		});
+	},
+});
+export const GeometryCollectionSchema = custom<GeometryCollection>((v) => v instanceof GeometryCollection, {
+	error: (issue) => {
+		return constructErrorMessage({
+			expected: "GeometryCollection",
+			input: issue.input,
+		});
+	},
+});
 
 // !SECTION
 // SECTION - Range
 
 export function RangeSchema<Beg extends ZodType, End extends ZodType>(begValueSchema: Beg, endValueSchema: End) {
-	const getBoundSchema = (bound: Bound<unknown>, schema: Beg | End) => {
-		return bound instanceof BoundIncluded
-			? BoundIncludedSchema(schema)
-			: bound instanceof BoundExcluded
-				? BoundExcludedSchema(schema)
-				: ZodUndefined();
-	};
+	return custom<Range<output<Beg>, output<End>>>((v) => v instanceof Range, {
+		error: (issue) => {
+			return constructErrorMessage({
+				expected: "Range",
+				input: issue.input,
+			});
+		},
+	}).superRefine((v, ctx) => {
+		const parsedBegin = getBoundSchema(v.begin, begValueSchema).safeParse(v.begin);
 
-	return custom<Range<output<Beg>, output<End>>>((v) => v instanceof Range, "Value is not a valid Range").superRefine(
-		(v, ctx) => {
-			const parsedBeg = getBoundSchema(v.begin, begValueSchema).safeParse(v.begin);
+		if (!parsedBegin.success) {
+			for (const issue of parsedBegin.error.issues) {
+				ctx.addIssue({
+					...issue,
+					path: ["value", ...issue.path],
+				});
+			}
+		}
 
-			if (!parsedBeg.success) {
-				for (const issue of parsedBeg.error.issues) {
+		const parsedEnd = getBoundSchema(v.end, endValueSchema).safeParse(v.end);
+
+		if (!parsedEnd.success) {
+			for (const issue of parsedEnd.error.issues) {
+				ctx.addIssue({
+					...issue,
+					path: ["value", ...issue.path],
+				});
+			}
+		}
+	});
+}
+export function BoundIncludedSchema<T extends ZodType>(valueSchema: T) {
+	return custom<BoundIncluded<T>>((v) => v instanceof BoundIncluded, {
+		error: (issue) => {
+			return constructErrorMessage({
+				expected: "BoundIncluded",
+				input: issue.input,
+			});
+		},
+	}).superRefine((v, ctx) => {
+		const parsed = valueSchema.safeParse(v.value);
+
+		if (parsed.success) {
+			// NOTE: See https://zod.dev/api?id=transforms
+			return NEVER;
+		}
+
+		for (const issue of parsed.error.issues) {
+			ctx.addIssue({
+				...issue,
+				path: ["value", ...issue.path],
+			});
+		}
+	});
+}
+export function BoundExcludedSchema<T extends ZodType>(valueSchema: T) {
+	return custom<BoundExcluded<T>>((v) => v instanceof BoundExcluded, {
+		error: (issue) => {
+			return constructErrorMessage({
+				expected: "BoundExcluded",
+				input: issue.input,
+			});
+		},
+	}).superRefine((v, ctx) => {
+		const parsed = valueSchema.safeParse(v.value);
+
+		if (parsed.success) {
+			return;
+		}
+
+		for (const issue of parsed.error.issues) {
+			ctx.addIssue({
+				...issue,
+				path: ["value", ...issue.path],
+			});
+		}
+	});
+}
+export const RecordIdRangeSchema = custom<RecordIdRange>((v) => v instanceof RecordIdRange, {
+	error: (issue) => {
+		return constructErrorMessage({
+			expected: "RecordIdRange",
+			input: issue.input,
+		});
+	},
+});
+export function RecordIdRangeSchemaOf<Tb extends string, Id extends RecordIdValueSchema | undefined = undefined>(
+	table: Tb,
+	id?: Id,
+) {
+	return custom<RecordIdRange<Tb, Id extends ZodType ? output<Id> : RecordIdValue>>((v) => v instanceof RecordIdRange, {
+		error: (issue) => {
+			return constructErrorMessage({
+				expected: "RecordIdRange",
+				input: issue.input,
+			});
+		},
+	}).superRefine((v, ctx) => {
+		const parsedTable = TableSchemaOf(table).safeParse(v.table);
+
+		if (!parsedTable.success) {
+			for (const issue of parsedTable.error.issues) {
+				ctx.addIssue({
+					...issue,
+					path: ["table", ...issue.path],
+				});
+			}
+		}
+
+		if (id) {
+			const parsedBegin = getBoundSchema(v.begin, id).safeParse(v.begin);
+
+			if (!parsedBegin.success) {
+				for (const issue of parsedBegin.error.issues) {
 					ctx.addIssue({
 						...issue,
-						path: ["value", ...issue.path],
+						path: ["begin", ...issue.path],
 					});
 				}
 			}
 
-			const parsedEnd = getBoundSchema(v.end, endValueSchema).safeParse(v.end);
+			const parsedEnd = getBoundSchema(v.end, id).safeParse(v.end);
 
 			if (!parsedEnd.success) {
 				for (const issue of parsedEnd.error.issues) {
 					ctx.addIssue({
 						...issue,
-						path: ["value", ...issue.path],
+						path: ["end", ...issue.path],
 					});
 				}
 			}
-		},
-	);
-}
-export function BoundIncludedSchema<T extends ZodType>(valueSchema: T) {
-	return custom<BoundIncluded<T>>((v) => v instanceof BoundIncluded, "Value is not a valid BoundIncluded").superRefine(
-		(v, ctx) => {
-			const parsed = valueSchema.safeParse(v.value);
-
-			if (parsed.success) {
-				// NOTE: See https://zod.dev/api?id=transforms
-				return NEVER;
-			}
-
-			for (const issue of parsed.error.issues) {
-				ctx.addIssue({
-					...issue,
-					path: ["value", ...issue.path],
-				});
-			}
-		},
-	);
-}
-export function BoundExcludedSchema<T extends ZodType>(valueSchema: T) {
-	return custom<BoundExcluded<T>>((v) => v instanceof BoundExcluded, "Value is not a valid BoundIncluded").superRefine(
-		(v, ctx) => {
-			const parsed = valueSchema.safeParse(v.value);
-
-			if (parsed.success) {
-				return;
-			}
-
-			for (const issue of parsed.error.issues) {
-				ctx.addIssue({
-					...issue,
-					path: ["value", ...issue.path],
-				});
-			}
-		},
-	);
-}
-export const RecordIdRangeSchema = custom<RecordIdRange>(
-	(v) => v instanceof RecordIdRange,
-	"Value is not a valid RecordIdRange",
-);
-export function RecordIdRangeSchemaOf<Tb extends string>(table: Tb) {
-	const parsedTable = string().parse(table);
-
-	return custom<RecordIdRange<Tb>>(
-		(v) => v instanceof RecordIdRange && v.table.name === parsedTable,
-		`Value is not a valid RecordIdRange or is not from table: ${parsedTable}`,
-	);
+		}
+	});
 }
 
 // !SECTION
 // SECTION - RecordId
 
-export const RecordIdSchema = custom<RecordId>((value) => value instanceof RecordId, "Value is not a valid RecordId");
-export function RecordIdSchemaOf<Tb extends string>(table: Tb) {
-	const parsedTable = string().parse(table);
+export const RecordIdSchema = custom<RecordId>((value) => value instanceof RecordId, {
+	error: (issue) => {
+		return constructErrorMessage({
+			expected: "RecordId",
+			input: issue.input,
+		});
+	},
+});
+export function RecordIdSchemaOf<Tb extends string, Id extends RecordIdValueSchema | undefined = undefined>(
+	table: Tb,
+	id?: Id,
+) {
+	return custom<RecordId<Tb, Id extends ZodType ? output<Id> : RecordIdValue>>((value) => value instanceof RecordId, {
+		error: (issue) => {
+			return constructErrorMessage({
+				expected: "RecordId",
+				input: issue.input,
+			});
+		},
+	}).superRefine((v, ctx) => {
+		const parsedTable = TableSchemaOf(table).safeParse(v.table);
 
-	return custom<RecordId<Tb>>(
-		(value) => value instanceof RecordId && value.table.name === parsedTable,
-		`Value is not a valid RecordId or is not from table: ${parsedTable}`,
-	);
+		if (!parsedTable.success) {
+			for (const issue of parsedTable.error.issues) {
+				ctx.addIssue({
+					...issue,
+					path: ["table", ...issue.path],
+				});
+			}
+		}
+
+		if (id) {
+			const parsedId = id.safeParse(v.id);
+
+			if (!parsedId.success) {
+				for (const issue of parsedId.error.issues) {
+					ctx.addIssue({
+						...issue,
+						path: ["table", ...issue.path],
+					});
+				}
+			}
+		}
+	});
 }
-export const StringRecordIdSchema = custom<StringRecordId>(
-	(value) => value instanceof StringRecordId,
-	"Value is not a valid StringRecordId",
-);
+export const StringRecordIdSchema = custom<StringRecordId>((value) => value instanceof StringRecordId, {
+	error: (issue) => {
+		return constructErrorMessage({
+			expected: "StringRecordId",
+			input: issue.input,
+		});
+	},
+});
 
 // SECTION - helpers
 
 export const RecordSchema = object({
 	id: RecordIdSchema,
 });
-export function RecordSchemaOf<Tb extends string>(table: Tb) {
+export function RecordSchemaOf<Tb extends string, Id extends RecordIdValueSchema | undefined = undefined>(
+	table: Tb,
+	id?: Id,
+) {
 	return object({
-		id: RecordIdSchemaOf(table),
+		id: RecordIdSchemaOf<Tb, Id>(table, id),
 	});
 }
 
@@ -202,27 +430,54 @@ export function RecordSchemaOf<Tb extends string>(table: Tb) {
 // !SECTION
 // SECTION - Table
 
-export const TableSchema = custom<Table>((v) => v instanceof Table, "Value is not a valid Table");
+export const TableSchema = custom<Table>((v) => v instanceof Table, {
+	error: (issue) => {
+		return constructErrorMessage({
+			expected: "Table",
+			input: issue.input,
+		});
+	},
+});
 export function TableSchemaOf<Tb extends string>(table: Tb) {
-	const parsedTable = string().parse(table);
-
-	return custom<Table<Tb>>(
-		(v) => v instanceof Table && v.name === parsedTable,
-		`Value is not a valid Table or is not from table: ${parsedTable}`,
-	);
+	return custom<Table<Tb>>((v) => v instanceof Table, {
+		error: (issue) => {
+			return constructErrorMessage({
+				expected: "Table",
+				input: issue.input,
+			});
+		},
+	}).superRefine((v, ctx) => {
+		if (v.name !== table) {
+			ctx.addIssue({
+				code: "invalid_value",
+				values: [table],
+				input: v.name,
+				path: ["name"],
+			});
+		}
+	});
 }
 
 // !SECTION
 // SECTION - Uuid
 
-export const UuidSchema = custom<Uuid>((v) => v instanceof Uuid, "Value is not a valid Uuid");
+export const UuidSchema = custom<Uuid>((v) => v instanceof Uuid, {
+	error: (issue) => {
+		return constructErrorMessage({
+			expected: "Uuid",
+			input: issue.input,
+		});
+	},
+});
 
 // !SECTION
 // SECTION - Types of Helpers
 // SECTION - RecordId
 
 export type Record = output<typeof RecordSchema>;
-export type RecordOf<Tb extends string = string> = output<ReturnType<typeof RecordSchemaOf<Tb>>>;
+export type RecordOf<Tb extends string = string, Id extends RecordIdValue = RecordIdValue> = {
+	id: RecordId<Tb, Id>;
+};
 
 // !SECTION
 // !SECTION
