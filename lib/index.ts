@@ -31,6 +31,8 @@ import {
 	type ZodArray,
 	type ZodBigInt,
 	type ZodCustom,
+	type ZodEnum,
+	type ZodLiteral,
 	type ZodNumber,
 	type ZodObject,
 	type ZodString,
@@ -84,7 +86,16 @@ function getBoundSchema<T extends ZodType>(bound: Bound<unknown>, schema: T) {
 /**
  * @private
  */
-type RecordIdValueSchema = ZodString | ZodNumber | ZodCustom<Uuid> | ZodBigInt | ZodObject | ZodArray;
+type RecordIdValueSchema =
+	| ZodString
+	| ZodNumber
+	| ZodCustom<Uuid>
+	| ZodBigInt
+	| ZodObject
+	| ZodArray
+	| ZodLiteral<string | number | bigint>
+	| ZodEnum
+	| ZodType<RecordIdValue>;
 
 // SECTION - DateTime
 
